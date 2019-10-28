@@ -1,3 +1,5 @@
 export default ({
   IS_REDUX_WORKING: 'IS_REDUX_WORKING',
+  SET_USER: 'SET_USER',
+  UNSET_USER: 'UNSET_USER',
 });

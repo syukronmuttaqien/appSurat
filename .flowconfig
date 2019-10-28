@@ -42,6 +42,7 @@ module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|we
 module.name_mapper='^~/\(.*\)$' -> '<PROJECT_ROOT>/src/\1'    
 module.name_mapper='^!/\(.*\)$' -> '<PROJECT_ROOT>/src/Redux/Actions/\1'  
 module.name_mapper='^-/\(.*\)$' -> '<PROJECT_ROOT>/src/Redux/Reducers/\1'  
+module.name_mapper='^#/\(.*\)$' -> '<PROJECT_ROOT>/src/Components/\1'
 
 suppress_type=$FlowIssue
 suppress_type=$FlowFixMe
