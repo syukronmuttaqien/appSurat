@@ -24,15 +24,15 @@ useScreens();
 
 const theme = {
   ...lightTheme,
-  'color-primary-100': '#E2FBC9', // <- new primary color
-  'color-primary-200': '#BFF896',
-  'color-primary-300': '#90EB5F',
-  'color-primary-400': '#63D837',
-  'color-primary-500': '#28BE02',
-  'color-primary-600': '#16A301',
-  'color-primary-700': '#088801',
-  'color-primary-800': '#006E02',
-  'color-primary-900': '#005B08',
+  'color-primary-100': '#FFE5CC',
+  'color-primary-200': '#FFC499',
+  'color-primary-300': '#FF9B66',
+  'color-primary-400': '#FF743F',
+  'color-primary-500': '#FF3300',
+  'color-primary-600': '#DB1B00',
+  'color-primary-700': '#B70900',
+  'color-primary-800': '#930003',
+  'color-primary-900': '#7A000B',
 };
 
 const App: () => React$Node = () => {

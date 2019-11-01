@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
-import { StyleSheet, Image, ActivityIndicator, ScrollView } from 'react-native';
+import { StyleSheet, Image, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { Layout, Text, Button } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 
-import { Surat } from '~/Services/Api';
+import { LaporanBarangRusak } from '~/Services/Api';
 
-class DetailSurat extends Component {
+class DetailLaporan extends Component {
   static navigationOptions = {
-    title: 'Isi Surat',
+    title: 'Detail Laporan Barang Rusak',
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      title: '',
+      pelapor: '',
+      namaBarang: '',
       foto: [],
-      tujuan: [],
+      keterangan: '',
       loading: false,
-      hasCatatan: false,
     };
   }
 
@@ -34,14 +34,29 @@ class DetailSurat extends Component {
 
     try {
       this.setState({ loading: true });
-      const response = await Surat.getById(id);
+      const response = await LaporanBarangRusak.getById(id);
       const { data } = response.data;
 
-      const { foto, tujuan, perihal: title } = data;
-      const catatans = tujuan.filter(val => val.catatan !== null && val.catatan !== '');
+      const { foto, nama_barang: namaBarang, keterangan, user: { nama: pelapor } } = data;
 
-      this.setState({ foto, tujuan, title, hasCatatan: catatans.length > 0 });
+      this.setState({ foto, namaBarang, keterangan, pelapor });
 
+    } catch (err) {
+      console.log({ err });
+    } finally {
+      this.setState({ loading: false });
+    }
+  }
+
+  updateStatus = async () => {
+    const { navigation } = this.props;
+    const id = navigation.getParam('id');
+
+    try {
+      this.setState({ loading: true });
+      const response = await LaporanBarangRusak.updateStatus(id);
+      console.log({ response });
+      navigation.goBack();
     } catch (err) {
       console.log({ err });
     } finally {
@@ -51,14 +66,18 @@ class DetailSurat extends Component {
   //
 
   // Function
-    onPressDisposisi = () => {
-      const { navigation, user } = this.props;
-      const { tujuan } = this.state;
-      const id = navigation.getParam('id');
-      const jabatan_id = tujuan.map(val => val.jabatan.id);
-      jabatan_id.push(user.jabatan_id);
-      navigation.navigate('DisposisiSuratScreen', { id, jabatan_id });
-    }
+  onPressSudahDiperbaiki = () => {
+    Alert.alert('Perhatian', 'Anda yakin ingin mengubah status perbaikan Barang/Fasilitas?', [
+      {
+        text: 'Ya',
+        onPress: () => this.updateStatus(),
+      },
+      {
+        text: 'Tidak',
+        onPress: () => {},
+      },
+    ] );
+  }
   //
 
   // Render Function
@@ -67,7 +86,7 @@ class DetailSurat extends Component {
 
   render() {
 
-    const { title, foto, tujuan, loading, hasCatatan } = this.state;
+    const { namaBarang, foto, keterangan, loading, pelapor } = this.state;
 
     if (loading) {
       return (
@@ -78,33 +97,17 @@ class DetailSurat extends Component {
       );
     }
 
-    let noCatatan = 0;
-
     return (
       <ScrollView style={styles.mainContainer}>
         <Layout style={styles.container} level="2">
           <Layout style={styles.body}>
-            <Text category="h6" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>Perihal:</Text>
-            <Text category="p1" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>{title}</Text>
-            <Text category="h6" style={{ marginTop: 16, flexDirection: 'row', flexWrap: 'wrap' }}>Surat ini ditujukan kepada: </Text>
-            { tujuan.map((val, index) => {
-                return (
-                  <Text key={index.toString()} style={{ marginTop: 4, flexDirection: 'row', flexWrap: 'wrap' }} category="p1">{val.jabatan.nama}</Text>
-                );
-            })}
-
-            { hasCatatan && <Text style={{ marginTop: 16 }} category="h6">Catatan: </Text> }
-              { hasCatatan && tujuan.map((val, index) => {
-                  if (val.catatan) {
-                    noCatatan++;
-                    return (
-                      <Text key={index.toString()} style={{ marginTop: 8, flexDirection: 'row', flexWrap: 'wrap' }} category="p1">{noCatatan}. {val.catatan}</Text>
-                    );
-                  }
-              })}
-
-
-            <Text category="s1" style={{ marginTop: 16, flexDirection: 'row', flexWrap: 'wrap' }}>Foto Surat: </Text>
+            <Text category="h5" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>Pelapor: </Text>
+            <Text category="p1" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>{pelapor}</Text>
+            <Text category="h5" style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8}}>Nama Barang: </Text>
+            <Text category="p1" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>{namaBarang}</Text>
+            <Text category="h5" style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>Keterangan:</Text>
+            <Text category="p1" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>{keterangan}</Text>
+            <Text category="s1" style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 16 }}>Foto Barang/Fasilitas:</Text>
             { foto.map((val, index) => {
                 return (
                   <Layout key={index.toString()}>
@@ -113,7 +116,7 @@ class DetailSurat extends Component {
                 );
               })
             }
-            <Button style={{ marginTop: 16 }} onPress={this.onPressDisposisi} status="primary" >DISPOSISI</Button>
+            <Button style={{ marginTop: 16 }} onPress={this.onPressSudahDiperbaiki} status="primary">BARANG TELAH DIPERBAIKI</Button>
           </Layout>
         </Layout>
       </ScrollView>
@@ -136,4 +139,4 @@ const mapStateToProps = state =>({
   user: state.user,
 });
 
-export default connect(mapStateToProps, null)(DetailSurat);
+export default connect(mapStateToProps, null)(DetailLaporan);

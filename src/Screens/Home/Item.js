@@ -12,7 +12,7 @@ const Item = ({ icon, caption, index, onPress }) => {
     <Layout style={[style.mainContainer, index % 2 === 0 ? { paddingLeft: 0 } : { paddingRight: 0} ]} level="2">
       <Touchable onPress={onPress}>
         <Layout style={style.container}>
-          <Icon size={32} name={icon} color="#28BE02" />
+          <Icon size={32} name={icon} color="#FF3300" />
           <Text status="primary" category="h6" style={[style.spacer, { textAlign: 'center' }]}>{caption}</Text>
         </Layout>
       </Touchable>

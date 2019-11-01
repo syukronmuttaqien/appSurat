@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Image, Alert, ActivityIndicator, ToastAndroid } from 'react-native';
+import { StyleSheet, Image, Alert, ActivityIndicator, ToastAndroid, ScrollView } from 'react-native';
 import moment from 'moment';
 import { Layout, Input, List, Text, Button, Select, Icon as EvaIcon } from 'react-native-ui-kitten';
 
@@ -225,56 +225,58 @@ class TambahSurat extends Component {
     const { items, foto, loading } = this.state;
 
     return (
-      <Layout style={{ flex: 1, padding: 16 }}>
-        <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">Tujuan</Text>
-        <SectionedMultiSelect
-          items={items}
-          loading={this.state.loadingJabatan}
-          showChips={false}
-          uniqueKey="id"
-          displayKey="name"
-          searchPlaceholderText="Cari Jabatan..."
-          selectText="Pilih Tujuan"
-          showDropDowns={true}
-          readOnlyHeadings={false}
-          onSelectedItemsChange={this.onSelectedItemsChange}
-          selectedItems={this.state.selectedItems}
-          itemFontFamily="normal"
-          styles={{
-            button: { backgroundColor: '#28BE02' },
-          }}
-        />
-        <Input
-          label="Perihal"
-          labelStyle={{ color: 'black' }}
-          placeholder="Perihal"
-          textStyle={{ padding: 0, paddingLeft: 0 }}
-          style={{ backgroundColor: 'white', marginHorizontal: 4 }}
-          textContentType="name"
-          value={this.state.perihal}
-          onChangeText={this.onChangeText}
-        />
-        <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">Jenis Surat</Text>
-        <Select
-          controlStyle={{ backgroundColor: 'white', margin: 0 }}
-          data={this.state.itemsJenisSurat}
-          placeholder={this.state.loadingJenisSurat ? 'Loading...' : 'Pilih Jenis Surat'}
-          icon={this.renderIcon}
-          selectedOption={this.state.selectedOptionJenisSurat}
-          onSelect={this.onSelect}
-        />
-        <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">Foto Surat</Text>
-        <List
-          data={[...foto, 'add']}
-          extraData={this.state}
-          renderItem={this.renderItem}
-          numColumns={3}
-          style={{ backgroundColor: 'white', marginTop: 8, marginHorizontal: 4 }}
-        />
+      <ScrollView style={{ flex: 1}}>
+        <Layout style={{ flex: 1, padding: 16 }}>
+          <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">Tujuan</Text>
+          <SectionedMultiSelect
+            items={items}
+            loading={this.state.loadingJabatan}
+            showChips={false}
+            uniqueKey="id"
+            displayKey="name"
+            searchPlaceholderText="Cari Jabatan..."
+            selectText="Pilih Tujuan"
+            showDropDowns={true}
+            readOnlyHeadings={false}
+            onSelectedItemsChange={this.onSelectedItemsChange}
+            selectedItems={this.state.selectedItems}
+            itemFontFamily="normal"
+            styles={{
+              button: { backgroundColor: '#FF3300' },
+            }}
+          />
+          <Input
+            label="Perihal"
+            labelStyle={{ color: 'black' }}
+            placeholder="Perihal"
+            textStyle={{ padding: 0, paddingLeft: 0 }}
+            style={{ backgroundColor: 'white', marginHorizontal: 4 }}
+            textContentType="name"
+            value={this.state.perihal}
+            onChangeText={this.onChangeText}
+          />
+          <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">Jenis Surat</Text>
+          <Select
+            controlStyle={{ backgroundColor: 'white', margin: 0 }}
+            data={this.state.itemsJenisSurat}
+            placeholder={this.state.loadingJenisSurat ? 'Loading...' : 'Pilih Jenis Surat'}
+            icon={this.renderIcon}
+            selectedOption={this.state.selectedOptionJenisSurat}
+            onSelect={this.onSelect}
+          />
+          <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">Foto Surat</Text>
+          <List
+            data={[...foto, 'add']}
+            extraData={this.state}
+            renderItem={this.renderItem}
+            numColumns={3}
+            style={{ backgroundColor: 'white', marginTop: 8, marginHorizontal: 4 }}
+          />
 
-        {!loading && <Button onPress={this.onSimpanPressed} style={{ marginTop: 8, marginHorizontal: 4 }} status="primary">SIMPAN</Button>}
-        {loading && <ActivityIndicator color="#28BE02" size="large" style={{ marginHorizontal: 4 }} />}
-      </Layout>
+          {!loading && <Button onPress={this.onSimpanPressed} style={{ marginTop: 8, marginHorizontal: 4 }} status="primary">SIMPAN</Button>}
+          {loading && <ActivityIndicator color="#FF3300" size="large" style={{ marginHorizontal: 4 }} />}
+        </Layout>
+      </ScrollView>
     );
   }
 }

@@ -127,7 +127,7 @@ class DisposisiSurat extends Component {
           selectedItems={this.state.selectedItems}
           itemFontFamily="normal"
           styles={{
-            button: { backgroundColor: '#28BE02' },
+            button: { backgroundColor: '#FF3300' },
           }}
         />
         <Input
@@ -143,7 +143,7 @@ class DisposisiSurat extends Component {
           onChangeText={(text) => { this.setState({ catatan: text });}}
         />
         {!loading && <Button onPress={this.onDisposisiPressed} style={{ marginTop: 8, marginHorizontal: 4 }} status="primary">DISPOSISI</Button>}
-        {loading && <ActivityIndicator color="#28BE02" size="large" style={{ marginHorizontal: 4 }} />}
+        {loading && <ActivityIndicator color="#FF3300" size="large" style={{ marginHorizontal: 4 }} />}
       </Layout>
     );
   }

@@ -41,13 +41,13 @@ class Home extends Component {
     const menu2 = {
       icon: 'bus',
       caption: 'Peminjaman Bus',
-      onPress: () => {},
+      onPress: () => navigation.navigate('PinjamBusScreen'),
     };
 
     const menu3 = {
       icon: 'box',
       caption: 'Pelaporan Barang Rusak',
-      onPress: () => {},
+      onPress: () => navigation.navigate('LaporanBarangRusakScreen'),
     };
 
     // const menu4 = {

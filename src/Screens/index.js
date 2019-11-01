@@ -9,6 +9,11 @@ import SuratScreen from './Surat';
 import TambahSuratScreen from './Surat/TambahSurat';
 import DetailSuratScreen from './Surat/DetailSurat';
 import DisposisiSuratScreen from './Surat/DisposisiSurat';
+import PinjamBusScreen from './PinjamBus';
+import TambahPinjamBusScreen from './PinjamBus/TambahPinjamBus';
+import LaporanBarangRusakScreen from './LaporBarangRusak';
+import TambahLaporanBarangRusakScreen from './LaporBarangRusak/TambahLaporan';
+import DetailLaporanBarangRusakScreen from './LaporBarangRusak/DetailLaporan';
 //
 
 
@@ -21,6 +26,11 @@ const HomeStack = createStackNavigator(
     TambahSuratScreen,
     DetailSuratScreen,
     DisposisiSuratScreen,
+    PinjamBusScreen,
+    TambahPinjamBusScreen,
+    LaporanBarangRusakScreen,
+    TambahLaporanBarangRusakScreen,
+    DetailLaporanBarangRusakScreen,
   },
   {
     initialRouteName: 'SplashScreen',

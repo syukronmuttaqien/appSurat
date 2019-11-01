@@ -26,6 +26,7 @@ module.exports = (api) => {
     presets: ['module:metro-react-native-babel-preset'],
     plugins: [
       ['babel-plugin-root-import', configRootImport],
+      ['transform-remove-console'],
     ],
   };
 };

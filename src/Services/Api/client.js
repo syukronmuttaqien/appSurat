@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Platform } from 'react-native';
 
 const client = axios;
-const host = 'http://192.168.43.119:8000/api';
+const host = 'http:/api-poltekkes.ljj-kesehatan.com/api';
 const hostBase = 'http://192.168.43.119:8000/';
 
 export default client;
