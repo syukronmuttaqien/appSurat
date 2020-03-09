@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Image, Alert, ActivityIndicator, ToastAndroid, ScrollView } from 'react-native';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { Layout, Input, List, Text, Button, Icon as EvaIcon } from 'react-native-ui-kitten';
+import { Layout, List, Text, Button, Icon as EvaIcon } from 'react-native-ui-kitten';
 
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -10,17 +10,15 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Touchable } from '~/Components';
 import { LaporanBarangRusak } from '~/Services/Api';
 
-class TambahLaporan extends Component {
+class UpdloadFoto extends Component {
   static navigationOptions = {
-    title: 'Tambah Laporan Barang Rusak',
+    title: 'Update Laporan Barang Rusak',
   };
 
   constructor(props) {
     super(props);
     this.state = {
       foto: [],
-      namaBarang: '',
-      keterangan: '',
       loading: false,
     };
   }
@@ -33,17 +31,6 @@ class TambahLaporan extends Component {
 
   // Function
   validate = () => {
-
-    if (!this.state.namaBarang) {
-      Alert.alert('Perhatian', 'Nama Barang/Fasilitas belum di isi.');
-      return false;
-    }
-
-    if (!this.state.keterangan) {
-      Alert.alert('Perhatian','Keterangan belum di isi.');
-      return false;
-    }
-
     if (this.state.foto.length < 1) {
       Alert.alert('Perhatian', 'Belum ada foto yang diambil.');
       return false;
@@ -51,14 +38,6 @@ class TambahLaporan extends Component {
 
     return true;
   }
-
-  onChangeText = (namaBarang) => {
-    this.setState({ namaBarang });
-  };
-
-  onChangeTextKeterangan = (keterangan) => {
-    this.setState({ keterangan });
-  };
 
   openCamera = () => {
     ImagePicker.openCamera({
@@ -82,13 +61,12 @@ class TambahLaporan extends Component {
 
     try {
       const { navigation, user } = this.props;
-      const { foto, namaBarang, keterangan } = this.state;
+      const id = navigation.getParam('id');
+      const { foto } = this.state;
       if (this.validate()) {
         this.setState({ loading: true });
         const formData = new FormData();
 
-        formData.append('nama_barang', namaBarang);
-        formData.append('keterangan', keterangan);
         formData.append('user_id', user.id);
 
         foto.forEach((val, index) => {
@@ -103,10 +81,10 @@ class TambahLaporan extends Component {
             formData.append(`foto[${index}]`, file);
           }
         });
-        const response = await LaporanBarangRusak.add(formData);
+        const response = await LaporanBarangRusak.updateStatus(id, formData);
         console.log({ response });
-        ToastAndroid.show('Laporan berhasil di simpan.', ToastAndroid.SHORT);
-        navigation.goBack();
+        ToastAndroid.show('Laporan berhasil di update.', ToastAndroid.SHORT);
+        navigation.goBack('DetailLaporanBarangSuratScreen');
       } else {
         throw new Error('There is still missing field.');
       }
@@ -125,8 +103,8 @@ class TambahLaporan extends Component {
       return (
         <Touchable onPress={this.openCamera} >
           <Layout style={[styles.itemContainer, { borderColor: '#d0d0d0' }]} level="2">
-            <Layout style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent:'center'}}>
-              <Icon name="plus-square" size={32} color="#d0d0d0"/>
+            <Layout style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name="plus-square" size={32} color="#d0d0d0" />
             </Layout>
           </Layout>
         </Touchable>
@@ -135,10 +113,10 @@ class TambahLaporan extends Component {
 
     return (
       <Layout style={styles.itemContainer}>
-        <Image source={{ uri: item.path }} style={styles.image}/>
+        <Image source={{ uri: item.path }} style={styles.image} />
         <Touchable onPress={() => this.onRemovePress(index)}>
-          <Layout style={{ padding: 4, position:'absolute', top: 0, right: 4, backgroundColor: 'transparent' }}>
-            <Icon name="times" size={24} color="red"/>
+          <Layout style={{ padding: 4, position: 'absolute', top: 0, right: 4, backgroundColor: 'transparent' }}>
+            <Icon name="times" size={24} color="red" />
           </Layout>
         </Touchable>
       </Layout>
@@ -148,7 +126,7 @@ class TambahLaporan extends Component {
   renderIcon = (style, visible) => {
     const iconName = visible ? 'arrow-ios-upward' : 'arrow-ios-downward';
     return (
-      <EvaIcon {...style} name={iconName}/>
+      <EvaIcon {...style} name={iconName} />
     );
   };
   //
@@ -159,27 +137,7 @@ class TambahLaporan extends Component {
     return (
       <ScrollView style={{ flex: 1 }}>
         <Layout style={{ flex: 1, padding: 16 }}>
-          <Input
-            label="Nama Barang/Fasilitas"
-            labelStyle={{ color: 'black' }}
-            placeholder="Nama Barang/Fasilitas"
-            textStyle={{ padding: 0, paddingLeft: 0 }}
-            style={{ backgroundColor: 'white', marginHorizontal: 4 }}
-            textContentType="name"
-            value={this.state.namaBarang}
-            onChangeText={this.onChangeText}
-          />
-          <Input
-            label="Keterangan"
-            labelStyle={{ color: 'black' }}
-            placeholder="Keterangan"
-            textStyle={{ padding: 0, paddingLeft: 0 }}
-            style={{ backgroundColor: 'white', marginHorizontal: 4 }}
-            textContentType="name"
-            value={this.state.keterangan}
-            onChangeText={this.onChangeTextKeterangan}
-          />
-          <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">Foto Barang/Fasilitas</Text>
+          <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">Foto Barang/Fasilitas Setelah Diperbaiki</Text>
           <List
             data={[...foto, 'add']}
             extraData={this.state}
@@ -188,7 +146,7 @@ class TambahLaporan extends Component {
             style={{ backgroundColor: 'white', marginTop: 8, marginHorizontal: 4 }}
           />
 
-          {!loading && <Button onPress={this.onSimpanPressed} style={{ marginTop: 8, marginHorizontal: 4 }} status="primary">SIMPAN</Button>}
+          {!loading && <Button onPress={this.onSimpanPressed} style={{ marginTop: 8, marginHorizontal: 4 }} status="primary">UPDATE</Button>}
           {loading && <ActivityIndicator color="#FFB233" size="large" style={{ marginTop: 8, marginHorizontal: 4 }} />}
         </Layout>
       </ScrollView>
@@ -207,4 +165,4 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-export default connect(mapStateToProps)(TambahLaporan);
+export default connect(mapStateToProps)(UpdloadFoto);

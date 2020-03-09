@@ -1,5 +1,4 @@
 import Touchable from './Touchable';
+import Loader from './Loader';
 
-export {
-  Touchable,
-};
+export {Touchable, Loader};

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Platform } from 'react-native';
 
 const client = axios;
+// const host = 'http://siadum.poltekkesjakarta3.ac.id/surat-api/public/index.php/api';
 const host = 'http:/api-poltekkes.ljj-kesehatan.com/api';
 const hostBase = 'http://192.168.43.119:8000/';
 
@@ -13,7 +14,8 @@ export function initialize() {
   axios.defaults.baseURL = host;
   axios.defaults.timeout = 30000;
   axios.defaults.headers.common['Content-Type'] = 'application/json';
-  axios.defaults.headers.common.token = '161349545ea8199c4a8a469a5cce0bacbb81b281';
+  axios.defaults.headers.common.token =
+    '161349545ea8199c4a8a469a5cce0bacbb81b281';
   axios.defaults.headers.common['X-Platform'] = Platform.OS;
 
   axios.defaults.headers.post['Content-Type'] = 'application/json';
@@ -22,7 +24,10 @@ export function initialize() {
     axios.interceptors.request.use(
       config => {
         console.log(`Sending Request to ${config.baseURL}${config.url}`);
-        console.log({...config.headers.common, ...config.headers[config.method]});
+        console.log({
+          ...config.headers.common,
+          ...config.headers[config.method],
+        });
         if (config.data) {
           console.log(config.data);
         }
@@ -37,7 +42,7 @@ export function initialize() {
         }
 
         return Promise.reject(error);
-      }
+      },
     );
 
     axios.interceptors.response.use(
@@ -54,12 +59,14 @@ export function initialize() {
         }
 
         if (error.response) {
-          console.log(`Request failed with status code ${error.response.status}`);
+          console.log(
+            `Request failed with status code ${error.response.status}`,
+          );
           console.log('Response', error.response.data);
         }
 
         return Promise.reject(error);
-      }
+      },
     );
   }
 

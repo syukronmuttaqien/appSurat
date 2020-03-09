@@ -15,8 +15,10 @@ class DetailLaporan extends Component {
     this.state = {
       pelapor: '',
       namaBarang: '',
-      foto: [],
+      fotoSudah: [],
+      fotoBelum: [],
       keterangan: '',
+      status: '',
       loading: false,
     };
   }
@@ -37,9 +39,12 @@ class DetailLaporan extends Component {
       const response = await LaporanBarangRusak.getById(id);
       const { data } = response.data;
 
-      const { foto, nama_barang: namaBarang, keterangan, user: { nama: pelapor } } = data;
+      const { foto, nama_barang: namaBarang, keterangan, status, user: { nama: pelapor } } = data;
 
-      this.setState({ foto, namaBarang, keterangan, pelapor });
+      const fotoBelum = foto.filter(val => val.status === 'Sebelum');
+      const fotoSudah = foto.filter(val => val.status === 'Sesudah');
+
+      this.setState({ fotoBelum, fotoSudah, namaBarang, keterangan, pelapor, status });
 
     } catch (err) {
       console.log({ err });
@@ -50,18 +55,7 @@ class DetailLaporan extends Component {
 
   updateStatus = async () => {
     const { navigation } = this.props;
-    const id = navigation.getParam('id');
-
-    try {
-      this.setState({ loading: true });
-      const response = await LaporanBarangRusak.updateStatus(id);
-      console.log({ response });
-      navigation.goBack();
-    } catch (err) {
-      console.log({ err });
-    } finally {
-      this.setState({ loading: false });
-    }
+    navigation.navigate('UploadFotoBarangRusakScreen', { id: navigation.getParam('id') });
   }
   //
 
@@ -74,9 +68,9 @@ class DetailLaporan extends Component {
       },
       {
         text: 'Tidak',
-        onPress: () => {},
+        onPress: () => { },
       },
-    ] );
+    ]);
   }
   //
 
@@ -86,13 +80,14 @@ class DetailLaporan extends Component {
 
   render() {
 
-    const { namaBarang, foto, keterangan, loading, pelapor } = this.state;
+    const { namaBarang, fotoBelum, fotoSudah, keterangan, loading, pelapor, status } = this.state;
+    const { user } = this.props;
 
     if (loading) {
       return (
         <Layout style={styles.loading}>
-          <ActivityIndicator color="#FF3300" size="large" style={{ marginHorizontal: 4 }} />
-          <Text style={{ marginTop: 8 }} category="p1">Mengambil Surat..</Text>
+          <ActivityIndicator color="#FFB233" size="large" style={{ marginHorizontal: 4 }} />
+          <Text style={{ marginTop: 8 }} category="p1">Mengambil Data Laporan..</Text>
         </Layout>
       );
     }
@@ -103,20 +98,38 @@ class DetailLaporan extends Component {
           <Layout style={styles.body}>
             <Text category="h5" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>Pelapor: </Text>
             <Text category="p1" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>{pelapor}</Text>
-            <Text category="h5" style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8}}>Nama Barang: </Text>
+            <Text category="h5" style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>Nama Barang: </Text>
             <Text category="p1" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>{namaBarang}</Text>
             <Text category="h5" style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>Keterangan:</Text>
             <Text category="p1" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>{keterangan}</Text>
-            <Text category="s1" style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 16 }}>Foto Barang/Fasilitas:</Text>
-            { foto.map((val, index) => {
-                return (
-                  <Layout key={index.toString()}>
-                    <Image style={styles.image} source={{ uri: `http://${val.foto}` }} />
-                  </Layout>
-                );
-              })
+            <Text category="s1" style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 16 }}>Foto Barang/Fasilitas Sebelum Diperbaiki:</Text>
+            {fotoBelum.map((val, index) => {
+              return (
+                <Layout key={index.toString()}>
+                  <Image style={styles.image} source={{ uri: `http://${val.foto}` }} />
+                </Layout>
+              );
+            })
             }
-            <Button style={{ marginTop: 16 }} onPress={this.onPressSudahDiperbaiki} status="primary">BARANG TELAH DIPERBAIKI</Button>
+            {fotoSudah.length > 0 && <Text category="s1" style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 16 }}>Foto Barang/Fasilitas Setelah Diperbaiki:</Text>}
+            {fotoSudah.map((val, index) => {
+              return (
+                <Layout key={index.toString()}>
+                  <Image style={styles.image} source={{ uri: `http://${val.foto}` }} />
+                </Layout>
+              );
+            })
+            }
+            {(status === 'Belum' && (user.jabatan_id === 16 || user.jabatan_id === 18)) &&
+              (
+                <Button
+                  style={{ marginTop: 16 }}
+                  onPress={this.onPressSudahDiperbaiki}
+                  status="primary">
+                  BARANG TELAH DIPERBAIKI
+                </Button>
+              )
+            }
           </Layout>
         </Layout>
       </ScrollView>
@@ -135,7 +148,7 @@ const styles = StyleSheet.create({
 });
 
 
-const mapStateToProps = state =>({
+const mapStateToProps = state => ({
   user: state.user,
 });
 

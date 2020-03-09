@@ -36,6 +36,7 @@ target 'appSurat' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+
   target 'appSuratTests' do
     inherit! :search_paths
     # Pods for testing

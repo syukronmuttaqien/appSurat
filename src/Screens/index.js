@@ -14,6 +14,7 @@ import TambahPinjamBusScreen from './PinjamBus/TambahPinjamBus';
 import LaporanBarangRusakScreen from './LaporBarangRusak';
 import TambahLaporanBarangRusakScreen from './LaporBarangRusak/TambahLaporan';
 import DetailLaporanBarangRusakScreen from './LaporBarangRusak/DetailLaporan';
+import UploadFotoBarangRusakScreen from './LaporBarangRusak/UploadFoto';
 //
 
 
@@ -31,6 +32,7 @@ const HomeStack = createStackNavigator(
     LaporanBarangRusakScreen,
     TambahLaporanBarangRusakScreen,
     DetailLaporanBarangRusakScreen,
+    UploadFotoBarangRusakScreen,
   },
   {
     initialRouteName: 'SplashScreen',

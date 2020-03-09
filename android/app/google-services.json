@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "311307586081",
+    "firebase_url": "https://siadumjak3.firebaseio.com",
+    "project_id": "siadumjak3",
+    "storage_bucket": "siadumjak3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:311307586081:android:7cdbde19d367cc75903160",
+        "android_client_info": {
+          "package_name": "com.appsurat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "311307586081-at53b2r9as1jnmdj9irfbjq68dkp5gte.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuGjTficiVRBj23YMNj26OusXYGZGeU4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "311307586081-at53b2r9as1jnmdj9irfbjq68dkp5gte.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

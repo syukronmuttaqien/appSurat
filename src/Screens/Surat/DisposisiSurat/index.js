@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import { Alert, ToastAndroid, ActivityIndicator } from 'react-native';
-import { Layout, Text, Button, Icon as EvaIcon, Input } from 'react-native-ui-kitten';
+import {
+  Layout,
+  Text,
+  Button,
+  Icon as EvaIcon,
+  Input,
+} from 'react-native-ui-kitten';
 
+import { connect } from 'react-redux';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { Jabatan, Surat } from '~/Services/Api';
 
@@ -32,15 +39,21 @@ class DisposisiSurat extends Component {
   // API
   getJabatan = async () => {
     try {
-    const { navigation } = this.props;
-    const jabatan_id = navigation.getParam('jabatan_id');
-    const final_jabatan_id = JSON.stringify(jabatan_id);
-    this.setState({ loadingJabatan: true });
+      const { navigation } = this.props;
+      const {
+        user: { jabatan_id },
+      } = this.props;
+      const jenis_surat_id = navigation.getParam('jenis_surat_id');
+      // const final_jabatan_id = JSON.stringify(jabatan_id);
+      this.setState({ loadingJabatan: true });
 
-    const response = await Jabatan.getByExist(final_jabatan_id);
-    console.log({ response });
+      const response = await Jabatan.getByJenisSurat(
+        jenis_surat_id,
+        jabatan_id,
+      );
+      console.log({ response });
 
-    const { data } = response.data;
+      const { data } = response.data;
       const items = data.map(val => ({
         id: val.id,
         name: val.nama,
@@ -52,39 +65,38 @@ class DisposisiSurat extends Component {
     } finally {
       this.setState({ loadingJabatan: false });
     }
-  }
+  };
   //
 
   // Function
   validate = () => {
-
     if (this.state.selectedItems.length < 1) {
-      Alert.alert('Perhatian','Tujuan belum dipilih.');
+      Alert.alert('Perhatian', 'Tujuan belum dipilih.');
       return false;
     }
 
     return true;
-  }
+  };
 
-  onSelect = (selectedOptionJenisSurat) => {
+  onSelect = selectedOptionJenisSurat => {
     this.setState({ selectedOptionJenisSurat });
     console.log({ selectedOptionJenisSurat });
   };
 
   onSelectedItemsChange = selectedItems => {
     this.setState({ selectedItems });
-  }
+  };
 
   onDisposisiPressed = async () => {
     try {
-      const { navigation } = this.props;
+      const { navigation, user } = this.props;
       const { selectedItems, catatan } = this.state;
       if (this.validate()) {
         this.setState({ loading: true });
         const suratId = navigation.getParam('id');
         const finalTujuans = JSON.stringify(selectedItems);
         console.log({ catatan });
-        const response = await Surat.disposisi(suratId, finalTujuans, catatan);
+        const response = await Surat.disposisi(suratId, finalTujuans, catatan, user.jabatan_id);
         console.log({ response });
         ToastAndroid.show('Surat berhasil di disposisi.', ToastAndroid.SHORT);
         navigation.goBack('SSC');
@@ -96,14 +108,12 @@ class DisposisiSurat extends Component {
     } finally {
       this.setState({ loading: false });
     }
-  }
+  };
   //
 
   renderIcon = (style, visible) => {
     const iconName = visible ? 'arrow-ios-upward' : 'arrow-ios-downward';
-    return (
-      <EvaIcon {...style} name={iconName}/>
-    );
+    return <EvaIcon {...style} name={iconName} />;
   };
   //
 
@@ -112,7 +122,9 @@ class DisposisiSurat extends Component {
 
     return (
       <Layout style={{ flex: 1, padding: 16 }}>
-        <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">Tujuan</Text>
+        <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">
+          Tujuan
+        </Text>
         <SectionedMultiSelect
           items={items}
           loading={this.state.loadingJabatan}
@@ -127,7 +139,7 @@ class DisposisiSurat extends Component {
           selectedItems={this.state.selectedItems}
           itemFontFamily="normal"
           styles={{
-            button: { backgroundColor: '#FF3300' },
+            button: { backgroundColor: '#FFB233' },
           }}
         />
         <Input
@@ -140,13 +152,32 @@ class DisposisiSurat extends Component {
           multiline
           numberOfLines={3}
           value={this.state.catatan}
-          onChangeText={(text) => { this.setState({ catatan: text });}}
+          onChangeText={text => {
+            this.setState({ catatan: text });
+          }}
         />
-        {!loading && <Button onPress={this.onDisposisiPressed} style={{ marginTop: 8, marginHorizontal: 4 }} status="primary">DISPOSISI</Button>}
-        {loading && <ActivityIndicator color="#FF3300" size="large" style={{ marginHorizontal: 4 }} />}
+        {!loading && (
+          <Button
+            onPress={this.onDisposisiPressed}
+            style={{ marginTop: 8, marginHorizontal: 4 }}
+            status="primary">
+            DISPOSISI
+          </Button>
+        )}
+        {loading && (
+          <ActivityIndicator
+            color="#FFB233"
+            size="large"
+            style={{ marginHorizontal: 4 }}
+          />
+        )}
       </Layout>
     );
   }
 }
 
-export default DisposisiSurat;
+const mapStateToProps = state => ({
+  user: state.user,
+});
+
+export default connect(mapStateToProps, null)(DisposisiSurat);

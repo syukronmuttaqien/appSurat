@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, SafeAreaView, Alert } from 'react-native';
-import { StackActions, NavigationActions} from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
+
+// import PushNotification from 'react-native-push-notification';
 
 import { List } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
@@ -22,15 +24,18 @@ class Home extends Component {
     // title: 'Chat',
     header: null,
     headerMode: 'none',
-  }
+  };
 
   componentDidMount() {
+    const { user } = this.props;
+
+    // PushNotification.subscribeToTopic(user.jabatan.nama);
     this.addMenu();
   }
 
   // Regular Function
   addMenu = () => {
-    const { navigation } = this.props;
+    const { navigation, user } = this.props;
 
     const menu1 = {
       icon: 'envelope',
@@ -62,13 +67,20 @@ class Home extends Component {
       onPress: () => this.onPressLogout(),
     };
 
-    const menuItem = [
+    let menuItem = [
       menu1,
       menu2,
       menu3,
       // menu4,
       menu5,
     ];
+
+    if (user.jabatan_id >= 32 && user.jabatan_id <= 36) {
+      menuItem = [
+        menu1,
+        menu5,
+      ];
+    }
 
     this.setState({ menuItem });
   };
@@ -78,41 +90,42 @@ class Home extends Component {
 
     const resetAction = StackActions.reset({
       index: 0,
-      actions: [
-        NavigationActions.navigate({ routeName: 'LoginScreen' }),
-      ],
+      actions: [NavigationActions.navigate({ routeName: 'LoginScreen' })],
     });
 
     navigation.dispatch(resetAction);
     unsetUser();
-  }
+  };
 
   onPressLogout = () => {
-    Alert.alert(
-      'Log Out',
-      'Apakah anda yakin ingin log out?',
-      [
-        {
-          text: 'Ya',
-          onPress: () => this.logout(),
-        },
-        {
-          text: 'Tidak',
-          onPress: () => {},
-        },
-      ]
-    );
-  }
+    Alert.alert('Log Out', 'Apakah anda yakin ingin log out?', [
+      {
+        text: 'Ya',
+        onPress: () => this.logout(),
+      },
+      {
+        text: 'Tidak',
+        onPress: () => { },
+      },
+    ]);
+  };
   //
 
   // Render Function
   renderItem = ({ item, index }) => (
-    <Item caption={item.caption} icon={item.icon} index={index} onPress={item.onPress} />
+    <Item
+      caption={item.caption}
+      icon={item.icon}
+      index={index}
+      onPress={item.onPress}
+    />
   );
 
   render() {
-
-    const { nama, jabatan: { nama: jabatan} } = this.props.user;
+    const {
+      nama,
+      jabatan: { nama: jabatan },
+    } = this.props.user;
     const { menuItem } = this.state;
 
     return (

@@ -1,32 +1,34 @@
-module.exports = (api) => {
+module.exports = api => {
   api.cache(true);
 
   const configRootImport = {
-    'paths': [
+    paths: [
       {
-        'rootPathSuffix': './assets',
-        'rootPathPrefix': '$/',
+        rootPathSuffix: './assets',
+        rootPathPrefix: '$/',
       },
       {
-        'rootPathSuffix': './src',
-        'rootPathPrefix': '~/',
+        rootPathSuffix: './src',
+        rootPathPrefix: '~/',
       },
       {
-        'rootPathSuffix': './src/Redux/Actions',
-        'rootPathPrefix': '!/',
+        rootPathSuffix: './src/Redux/Actions',
+        rootPathPrefix: '!/',
       },
       {
-        'rootPathSuffix': './src/Redux/Reducers',
-        'rootPathPrefix': '-/',
+        rootPathSuffix: './src/Redux/Reducers',
+        rootPathPrefix: '-/',
       },
     ],
   };
 
   return {
     presets: ['module:metro-react-native-babel-preset'],
-    plugins: [
-      ['babel-plugin-root-import', configRootImport],
-      ['transform-remove-console'],
-    ],
+    plugins: [['babel-plugin-root-import', configRootImport]],
+    // env: {
+    //   production: {
+    //     plugins: ['transform-remove-console'],
+    //   },
+    // },
   };
 };
