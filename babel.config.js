@@ -25,10 +25,10 @@ module.exports = api => {
   return {
     presets: ['module:metro-react-native-babel-preset'],
     plugins: [['babel-plugin-root-import', configRootImport]],
-    // env: {
-    //   production: {
-    //     plugins: ['transform-remove-console'],
-    //   },
-    // },
+    env: {
+      production: {
+        plugins: ['transform-remove-console'],
+      },
+    },
   };
 };

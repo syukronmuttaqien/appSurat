@@ -24,6 +24,8 @@ import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
+import DatePicker from 'react-native-datepicker';
+
 import { Touchable } from '~/Components';
 import { Jabatan, JenisSurat, Surat } from '~/Services/Api';
 import { connect } from 'react-redux';
@@ -41,8 +43,12 @@ class TambahSurat extends Component {
       foto: [],
       perihal: '',
       nomorSurat: '',
+      noAgendaSurat: '', // New
       kodeSurat: '',
       asalSurat: '',
+      sifatSurat: '', // New
+      tglSurat: null, // New
+      tglJamAgenda: null, // New
       document: null,
       selectedOptionJenisSurat: null,
       itemsJenisSurat: [],
@@ -119,15 +125,15 @@ class TambahSurat extends Component {
       return false;
     }
 
-    if (!this.state.nomorSurat) {
-      Alert.alert('Perhatian', 'Nomor surat belum di isi.');
-      return false;
-    }
+    // if (!this.state.nomorSurat) {
+    //   Alert.alert('Perhatian', 'Nomor surat belum di isi.');
+    //   return false;
+    // }
 
-    if (!this.state.kodeSurat) {
-      Alert.alert('Perhatian', 'Kode surat belum di isi.');
-      return false;
-    }
+    // if (!this.state.kodeSurat) {
+    //   Alert.alert('Perhatian', 'Kode surat belum di isi.');
+    //   return false;
+    // }
 
     if (!this.state.asalSurat) {
       Alert.alert('Perhatian', 'Asal surat belum di isi.');
@@ -139,15 +145,35 @@ class TambahSurat extends Component {
       return false;
     }
 
+    // if (!this.state.noAgendaSurat) {
+    //   Alert.alert('Perhatian', 'No. Agenda Surat belum di isi.');
+    //   return false;
+    // }
+
+    // if (!this.state.sifatSurat) {
+    //   Alert.alert('Perhatian', 'Sifat Surat belum di isi.');
+    //   return false;
+    // }
+
+    // if (!this.state.tglJamAgenda) {
+    //   Alert.alert('Perhatian', 'Tanggal & Jam Agenda belum di isi.');
+    //   return false;
+    // }
+
+    // if (!this.state.tglSurat) {
+    //   Alert.alert('Perhatian', 'Tanggal belum di isi.');
+    //   return false;
+    // }
+
     if (this.state.selectedOptionJenisSurat === null) {
       Alert.alert('Perhatian', 'Jenis Surat belum dipilih.');
       return false;
     }
 
-    if (this.state.foto.length < 1) {
-      Alert.alert('Perhatian', 'Belum ada foto yang diambil.');
-      return false;
-    }
+    // if (this.state.foto.length < 1) {
+    //   Alert.alert('Perhatian', 'Belum ada foto yang diambil.');
+    //   return false;
+    // }
 
     return true;
   };
@@ -183,6 +209,15 @@ class TambahSurat extends Component {
     this.setState({ asalSurat });
   };
 
+  onChangeTextNoAgendaSurat = text => {
+    this.setState({ noAgendaSurat: text });
+  };
+
+  onChangeTextSifatSurat = text => {
+    this.setState({ sifatSurat: text });
+  };
+
+
   openCamera = () => {
     ImagePicker.openCamera({
       compressImageMaxHeight: 2560,
@@ -201,9 +236,17 @@ class TambahSurat extends Component {
         type: [DocumentPicker.types.allFiles],
       });
 
+      const allowedTypes = [
+        'application/doc',
+        'application/ms-doc',
+        'application/msword',
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      ];
+
       console.log({ document });
 
-      if (document.name.includes('.docx') || document.name.includes('.doc')) {
+      if (allowedTypes.includes(document.type)) {
         this.setState({ document });
         return;
       }
@@ -239,21 +282,38 @@ class TambahSurat extends Component {
         asalSurat,
         selectedOptionJenisSurat,
         document,
+        noAgendaSurat,
+        sifatSurat,
+        tglJamAgenda,
+        tglSurat,
       } = this.state;
       if (this.validate()) {
         this.setState({ loading: true });
         const finalTujuans = JSON.stringify(selectedItems);
         const formData = new FormData();
-
         formData.append('perihal', perihal);
         formData.append('nomor_surat', nomorSurat);
         formData.append('kode_surat', kodeSurat);
         formData.append('asal_surat', asalSurat);
         formData.append('from_jabatan_id', user.jabatan_id);
         formData.append('status_surat', 'Pending');
+        formData.append('no_agenda_surat', noAgendaSurat);
+        formData.append('sifat_surat', sifatSurat);
         formData.append('jenis_surat_id', selectedOptionJenisSurat.id);
         formData.append('tujuan', finalTujuans);
 
+        let tgl1 = null;
+        let tgl2 = null;
+
+        if (tglJamAgenda) {
+          tgl1 = moment(tglJamAgenda).format('YYYY-MM-DD HH:mm:ss');
+        }
+        if (tglSurat) {
+          tgl2 = moment(tglSurat).format('YYYY-MM-DD');
+        }
+
+        formData.append('tgl_jam_agenda', tgl1);
+        formData.append('tgl_surat', tgl2);
         if (document) {
           formData.append('dokumen', document);
         }
@@ -339,29 +399,19 @@ class TambahSurat extends Component {
       <ScrollView style={{ flex: 1 }}>
         <Layout style={{ flex: 1, padding: 16 }}>
           <Input
-            label="Nomor Surat"
+            label="Perihal"
             labelStyle={{ color: 'black' }}
-            placeholder="Nomor Surat"
+            placeholder="Perihal (Wajib di isi)"
             textStyle={{ padding: 0, paddingLeft: 0 }}
             style={{ backgroundColor: 'white', marginHorizontal: 4 }}
             textContentType="name"
-            value={this.state.nomorSurat}
-            onChangeText={this.onChangeTextNomorSurat}
-          />
-          <Input
-            label="Kode Surat"
-            labelStyle={{ color: 'black' }}
-            placeholder="Kode Surat"
-            textStyle={{ padding: 0, paddingLeft: 0 }}
-            style={{ backgroundColor: 'white', marginHorizontal: 4 }}
-            textContentType="name"
-            value={this.state.kodeSurat}
-            onChangeText={this.onChangeTextKodeSurat}
+            value={this.state.perihal}
+            onChangeText={this.onChangeText}
           />
           <Input
             label="Asal Surat"
             labelStyle={{ color: 'black' }}
-            placeholder="Asal Surat"
+            placeholder="Asal Surat (Wajib di isi)"
             textStyle={{ padding: 0, paddingLeft: 0 }}
             style={{ backgroundColor: 'white', marginHorizontal: 4 }}
             textContentType="name"
@@ -404,15 +454,104 @@ class TambahSurat extends Component {
             }}
           />
           <Input
-            label="Perihal"
+            label="Nomor Surat"
             labelStyle={{ color: 'black' }}
-            placeholder="Perihal"
+            placeholder="Nomor Surat (Tidak Wajib)"
             textStyle={{ padding: 0, paddingLeft: 0 }}
             style={{ backgroundColor: 'white', marginHorizontal: 4 }}
             textContentType="name"
-            value={this.state.perihal}
-            onChangeText={this.onChangeText}
+            value={this.state.nomorSurat}
+            onChangeText={this.onChangeTextNomorSurat}
           />
+          <Input
+            label="Kode Surat"
+            labelStyle={{ color: 'black' }}
+            placeholder="Kode Surat (Tidak Wajib)"
+            textStyle={{ padding: 0, paddingLeft: 0 }}
+            style={{ backgroundColor: 'white', marginHorizontal: 4 }}
+            textContentType="name"
+            value={this.state.kodeSurat}
+            onChangeText={this.onChangeTextKodeSurat}
+          />
+          <Input
+            label="Nomor Agenda Surat"
+            labelStyle={{ color: 'black' }}
+            placeholder="Nomor Agenda Surat (Tidak Wajib)"
+            textStyle={{ padding: 0, paddingLeft: 0 }}
+            style={{ backgroundColor: 'white', marginHorizontal: 4 }}
+            textContentType="name"
+            value={this.state.noAgendaSurat}
+            onChangeText={this.onChangeTextNoAgendaSurat}
+          />
+          <Input
+            label="Sifat Surat"
+            labelStyle={{ color: 'black' }}
+            placeholder="Sifat Surat (Tidak Wajib)"
+            textStyle={{ padding: 0, paddingLeft: 0 }}
+            style={{ backgroundColor: 'white', marginHorizontal: 4 }}
+            textContentType="name"
+            value={this.state.sifatSurat}
+            onChangeText={this.onChangeTextSifatSurat}
+          />
+          <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">
+            Tanggal Surat
+          </Text>
+
+          <DatePicker
+            style={{ width: '100%' }}
+            date={this.state.tglSurat}
+            mode="date"
+            placeholder="Tanggal Surat (Tidak Wajib)"
+            format="DD MMM YYYY"
+            minDate={moment()}
+            confirmBtnText="OK"
+            cancelBtnText="Batal"
+            customStyles={{
+              dateIcon: {
+                position: 'absolute',
+                left: 0,
+                top: 4,
+                marginLeft: 0,
+              },
+              dateInput: {
+                marginLeft: 36,
+              },
+              // ... You can check the source to find the other keys.
+            }}
+            onDateChange={date => {
+              this.setState({ tglSurat: date });
+            }}
+          />
+          <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">
+            Tanggal & Jam Agenda
+          </Text>
+
+          <DatePicker
+            style={{ width: '100%' }}
+            date={this.state.tglJamAgenda}
+            mode="datetime"
+            placeholder="Tanggal & Jam Agenda (Tidak Wajib)"
+            format="DD MMM YYYY HH:mm"
+            minDate={moment()}
+            confirmBtnText="OK"
+            cancelBtnText="Batal"
+            customStyles={{
+              dateIcon: {
+                position: 'absolute',
+                left: 0,
+                top: 4,
+                marginLeft: 0,
+              },
+              dateInput: {
+                marginLeft: 36,
+              },
+              // ... You can check the source to find the other keys.
+            }}
+            onDateChange={date => {
+              this.setState({ tglJamAgenda: date });
+            }}
+          />
+
           <Text style={{ marginTop: 8, marginHorizontal: 4 }} category="p1">
             Foto Surat
           </Text>
@@ -443,7 +582,7 @@ class TambahSurat extends Component {
             style={{ marginTop: 8, marginHorizontal: 4 }}
             category="p1"
             status="danger">
-            *Format file yang dilampirkan harus .docx atau .doc (Microsoft Word)
+            *Format file yang dilampirkan harus .docx atau .doc (Microsoft Word) atau .pdf (PDF)
           </Text>
 
           {!loading && (

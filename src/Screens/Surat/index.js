@@ -230,22 +230,22 @@ class Surat extends Component {
             <Text
               style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}
               category="s1">
-              Nomor Surat: {item.nomor_surat}
-            </Text>
-            <Text
-              style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}
-              category="s1">
-              Kode Surat: {item.kode_surat}
-            </Text>
-            <Text
-              style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}
-              category="s1">
               Asal Surat: {item.asal_surat}
             </Text>
             <Text
-              style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 }}
+              style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}
               category="s1">
               Jenis Surat: {item.jenissurat.jenis_surat}
+            </Text>
+            <Text
+              style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}
+              category="s1">
+              Nomor Surat: {item.nomor_surat ? item.nomor_surat : '-'}
+            </Text>
+            <Text
+              style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}
+              category="s1">
+              Kode Surat: {item.kode_surat ? item.kode_surat : '-'}
             </Text>
             <Text
               style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 4, color: color }}

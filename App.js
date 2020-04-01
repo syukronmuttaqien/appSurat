@@ -8,19 +8,24 @@
 
 import React from 'react';
 
-import {useScreens} from 'react-native-screens';
-import {mapping, light as lightTheme} from '@eva-design/eva';
-import {ApplicationProvider, IconRegistry} from 'react-native-ui-kitten';
-import {EvaIconsPack} from '@ui-kitten/eva-icons';
-import {PersistGate} from 'redux-persist/integration/react';
-import {Provider} from 'react-redux';
-import {store, persistor} from './src/Redux/Store';
+import { useScreens } from 'react-native-screens';
+import { mapping, light as lightTheme } from '@eva-design/eva';
+import { ApplicationProvider, IconRegistry } from 'react-native-ui-kitten';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { PersistGate } from 'redux-persist/integration/react';
+import { Provider } from 'react-redux';
+import { store, persistor } from './src/Redux/Store';
 // import messaging from '@react-native-firebase';
 import AppContainer from '~/Screens';
-import NotifService from '~/Services/NotifService';
+import NotifService, { registerAppWithFCM, requestPermission } from '~/Services/NotifService';
 import Api from './src/Services/Api';
+
+// Initialize Function Before App Start
 Api.initialize();
 useScreens();
+registerAppWithFCM();
+requestPermission();
+//
 
 const theme = {
   ...lightTheme,

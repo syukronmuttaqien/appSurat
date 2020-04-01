@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {StyleSheet, Image, Alert} from 'react-native';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { StyleSheet, Image, Alert } from 'react-native';
 import {
   Input,
   Layout,
@@ -10,10 +10,11 @@ import {
   Spinner,
 } from 'react-native-ui-kitten';
 
+import { subscribeToTopic } from '~/Services/NotifService';
 // import PushNotification from 'react-native-push-notification';
 // var PushNotification = require('react-native-push-notification');
 
-import {User} from '~/Services/Api';
+import { User } from '~/Services/Api';
 import user from '!/userAction';
 
 // Resource (Image .etc)
@@ -54,29 +55,29 @@ class Login extends Component {
   // Function
   onIconPress = () => {
     const secureTextEntry = !this.state.secureTextEntry;
-    this.setState({secureTextEntry});
+    this.setState({ secureTextEntry });
   };
 
   onInputUsernameChange = username => {
-    this.setState({username});
+    this.setState({ username });
   };
 
   onInputPasswordChange = password => {
-    this.setState({password});
+    this.setState({ password });
   };
 
   onPressLogin = () => {
-    const {username, password} = this.state;
+    const { username, password } = this.state;
     this.doLogin(username, password);
   };
 
   doLogin = async (username, password) => {
     try {
-      this.setState({fetching: true});
+      this.setState({ fetching: true });
       const response = await User.login(username, password);
 
-      const {msg, data, status} = response.data;
-      const {setUser, navigation} = this.props;
+      const { msg, data, status } = response.data;
+      const { setUser, navigation } = this.props;
 
       if (status === 0) {
         Alert.alert('Login gagal', msg);
@@ -84,11 +85,12 @@ class Login extends Component {
       }
       // PushNotification.subscribeToTopic(String(data.jabatan_id));
       setUser(data);
+      subscribeToTopic(data.jabatan_id);
       navigation.replace('HomeScreen');
     } catch (err) {
-      console.log({err});
+      console.log({ err });
     } finally {
-      this.setState({fetching: false});
+      this.setState({ fetching: false });
     }
   };
   //
@@ -101,7 +103,7 @@ class Login extends Component {
   //
 
   render() {
-    const {fetching} = this.state;
+    const { fetching } = this.state;
 
     if (fetching) {
       return (
@@ -166,14 +168,14 @@ const style = StyleSheet.create({
     flex: 0,
     padding: 16,
     elevation: 4,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowColor: 'black',
     shadowOpacity: 0.2,
     minWidth: '85%',
   },
-  image: {height: 150},
-  spacer: {marginTop: 8},
-  spacer2: {marginTop: 16},
+  image: { height: 150 },
+  spacer: { marginTop: 8 },
+  spacer2: { marginTop: 16 },
 });
 
 const mapDispatchToProps = dispatch => ({

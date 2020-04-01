@@ -1,10 +1,12 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {StyleSheet, Image, Alert} from 'react-native';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { StyleSheet, Image } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {Layout, Text} from 'react-native-ui-kitten';
-import {VERSION_PERSIST} from '~/Redux/Persist/config';
+import { Layout, Text } from 'react-native-ui-kitten';
+import { VERSION_PERSIST } from '~/Redux/Persist/config';
+
+import { subscribeToTopic } from '~/Services/NotifService';
 import userAction from '!/userAction';
 import logo from '$/Images/logo.png';
 
@@ -23,9 +25,9 @@ class Splash extends Component {
   }
 
   CheckPersistVersion = async () => {
-    const {unsetUser, user} = this.props;
+    const { unsetUser, user } = this.props;
 
-    console.log({user});
+    console.log({ user });
     const localVersion = await AsyncStorage.getItem('REDUCER_VERSION');
 
     if (localVersion !== VERSION_PERSIST) {
@@ -34,7 +36,7 @@ class Splash extends Component {
 
     await AsyncStorage.setItem('REDUCER_VERSION', VERSION_PERSIST);
 
-    this.setState({loading: false});
+    this.setState({ loading: false });
 
     this.countDown();
   };
@@ -44,14 +46,16 @@ class Splash extends Component {
   }
 
   countDown = () => {
-    const {user} = this.props;
+    const { user } = this.props;
 
     setInterval(() => {
-      const {navigation} = this.props;
+      const { navigation } = this.props;
 
       if (!user.isLoggedIn) {
         return navigation.replace('LoginScreen');
       }
+
+      // subscribeToTopic(user.jabatan_id);
       return navigation.replace('HomeScreen');
     }, 2500);
   };
@@ -59,7 +63,7 @@ class Splash extends Component {
   render() {
     return (
       <Layout style={style.container}>
-        <Image style={{height: 150}} resizeMode="contain" source={logo} />
+        <Image style={{ height: 150 }} resizeMode="contain" source={logo} />
         <Text category="h2" style={style.text}>
           SIADUM JAK 3
         </Text>
@@ -75,7 +79,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  text: {textAlign: 'center', marginTop: 8},
+  text: { textAlign: 'center', marginTop: 8 },
 });
 
 const mapStateToProps = state => ({

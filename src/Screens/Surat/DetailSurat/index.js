@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 
 import RNFS from 'react-native-fs';
 import FileViewer from 'react-native-file-viewer';
+import moment from 'moment';
 
 import { Surat } from '~/Services/Api';
 import { Loader } from '~/Components';
@@ -28,6 +29,10 @@ class DetailSurat extends Component {
       kode: '',
       asal: '',
       title: '',
+      noAgenda: '',
+      sifatSurat: '',
+      tglSurat: null,
+      tglJamAgenda: null,
       foto: [],
       tujuan: [],
       dokumen: null,
@@ -68,6 +73,10 @@ class DetailSurat extends Component {
         jenis_surat_id,
         jabatan_sudah_disposisi,
         status_surat,
+        tgl_jam_agenda,
+        sifat_surat,
+        tgl_surat,
+        no_agenda_surat,
       } = data;
       const catatans = tujuan.filter(
         val => val.catatan !== null && val.catatan !== '',
@@ -85,6 +94,10 @@ class DetailSurat extends Component {
         status_surat,
         dokumen,
         jabatanSudahDisposisi: jabatan_sudah_disposisi,
+        tglJamAgenda: tgl_jam_agenda,
+        sifatSurat: sifat_surat,
+        tglSurat: tgl_surat,
+        noAgenda: no_agenda_surat,
       });
     } catch (err) {
       console.log({ err });
@@ -231,6 +244,10 @@ class DetailSurat extends Component {
       dokumen,
       loadingLampiran,
       loadingUpdate,
+      noAgenda,
+      tglJamAgenda,
+      tglSurat,
+      sifatSurat,
     } = this.state;
 
     const {
@@ -262,26 +279,16 @@ class DetailSurat extends Component {
               <Text
                 category="h6"
                 style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                Nomor Surat:
+                Perihal:
               </Text>
               <Text
                 category="p1"
                 style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                {nomor}
+                {title}
               </Text>
               <Text
                 category="h6"
-                style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                Kode Surat:
-              </Text>
-              <Text
-                category="p1"
-                style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                {kode}
-              </Text>
-              <Text
-                category="h6"
-                style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                style={{ marginTop: 4, flexDirection: 'row', flexWrap: 'wrap' }}>
                 Asal Surat:
               </Text>
               <Text
@@ -291,13 +298,63 @@ class DetailSurat extends Component {
               </Text>
               <Text
                 category="h6"
-                style={{ marginTop: 16, flexDirection: 'row', flexWrap: 'wrap' }}>
-                Perihal:
+                style={{ marginTop: 4, flexDirection: 'row', flexWrap: 'wrap' }}>
+                Nomor Surat:
               </Text>
               <Text
                 category="p1"
                 style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                {title}
+                {nomor ? nomor : '-'}
+              </Text>
+              <Text
+                category="h6"
+                style={{ marginTop: 4, flexDirection: 'row', flexWrap: 'wrap' }}>
+                Kode Surat:
+              </Text>
+              <Text
+                category="p1"
+                style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                {kode ? kode : '-'}
+              </Text>
+              <Text
+                category="h6"
+                style={{ marginTop: 4, flexDirection: 'row', flexWrap: 'wrap' }}>
+                No. Agenda Surat:
+              </Text>
+              <Text
+                category="p1"
+                style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                {noAgenda ? noAgenda : '-'}
+              </Text>
+              <Text
+                category="h6"
+                style={{ marginTop: 4, flexDirection: 'row', flexWrap: 'wrap' }}>
+                Sifat Surat:
+              </Text>
+              <Text
+                category="p1"
+                style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                {sifatSurat ? sifatSurat : '-'}
+              </Text>
+              <Text
+                category="h6"
+                style={{ marginTop: 4, flexDirection: 'row', flexWrap: 'wrap' }}>
+                Tgl. Surat:
+              </Text>
+              <Text
+                category="p1"
+                style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                {tglSurat ? moment(tglSurat).format('DD MMM YYYY') : '-'}
+              </Text>
+              <Text
+                category="h6"
+                style={{ marginTop: 4, flexDirection: 'row', flexWrap: 'wrap' }}>
+                Tgl. & Jam Agenda Surat:
+              </Text>
+              <Text
+                category="p1"
+                style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                {tglJamAgenda ? moment(tglJamAgenda).format('DD MMM YYYY HH:mm') : '-'}
               </Text>
               <Text
                 category="h6"
@@ -309,7 +366,7 @@ class DetailSurat extends Component {
                   <Text
                     key={index.toString()}
                     style={{
-                      marginTop: 4,
+                      marginTop: index !== 0 ? 4 : 0,
                       flexDirection: 'row',
                       flexWrap: 'wrap',
                     }}
@@ -343,11 +400,13 @@ class DetailSurat extends Component {
                   }
                 })}
 
-              <Text
-                category="s1"
-                style={{ marginTop: 16, flexDirection: 'row', flexWrap: 'wrap' }}>
-                Foto Surat:{' '}
-              </Text>
+              {foto.length > 0 && (
+                <Text
+                  category="s1"
+                  style={{ marginTop: 16, flexDirection: 'row', flexWrap: 'wrap' }}>
+                  Foto Surat:{' '}
+                </Text>
+              )}
               {foto.map((val, index) => {
                 return (
                   <Layout key={index.toString()}>

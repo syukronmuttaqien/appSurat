@@ -8,6 +8,7 @@ import { List } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 
 import userAction from '!/userAction';
+import { unsubscribeFromTopic, subscribeToTopic } from '~/Services/NotifService';
 
 import Header from './Header';
 import Item from './Item';
@@ -28,7 +29,7 @@ class Home extends Component {
 
   componentDidMount() {
     const { user } = this.props;
-
+    subscribeToTopic(user.jabatan_id);
     // PushNotification.subscribeToTopic(user.jabatan.nama);
     this.addMenu();
   }
@@ -86,13 +87,14 @@ class Home extends Component {
   };
 
   logout = () => {
-    const { unsetUser, navigation } = this.props;
+    const { unsetUser, navigation, user } = this.props;
 
     const resetAction = StackActions.reset({
       index: 0,
       actions: [NavigationActions.navigate({ routeName: 'LoginScreen' })],
     });
 
+    unsubscribeFromTopic(user.jabatan_id);
     navigation.dispatch(resetAction);
     unsetUser();
   };
